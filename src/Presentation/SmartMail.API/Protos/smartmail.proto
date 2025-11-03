@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+option csharp_namespace = "SmartMail.API.Protos";
+
+package smartmail;
+
+// SmartMail Email Service
+service SmartMailService {
+  rpc SendEmail (SendEmailRequest) returns (SendEmailResponse);
+  rpc SendBulkEmails (SendBulkEmailsRequest) returns (SendBulkEmailsResponse);
+  rpc GetEmail (GetEmailRequest) returns (EmailResponse);
+  rpc GetEmailStatus (GetEmailStatusRequest) returns (EmailStatusResponse);
+  rpc TrackOpen (TrackOpenRequest) returns (TrackOpenResponse);
+  rpc TrackClick (TrackClickRequest) returns (TrackClickResponse);
+  rpc HandleBounce (HandleBounceRequest) returns (HandleBounceResponse);
+  rpc HandleSpamComplaint (HandleSpamComplaintRequest) returns (HandleSpamComplaintResponse);
+  rpc Unsubscribe (UnsubscribeRequest) returns (UnsubscribeResponse);
+}
+
+message SendEmailRequest {
+  string tenant_id = 1;
+  string from = 2;
+  string from_display_name = 3;
+  string to = 4;
+  string to_display_name = 5;
+  repeated string cc = 6;
+  repeated string bcc = 7;
+  string subject = 8;
+  string html_body = 9;
+  string text_body = 10;
+  string campaign_id = 11;
+  string scheduled_at = 12; // ISO 8601 format
+  map<string, string> metadata = 13;
+  repeated Attachment attachments = 14;
+  bool send_immediately = 15;
+  string provider_override = 16;
+}
+
+message Attachment {
+  string file_name = 1;
+  string content_type = 2;
+  bytes content = 3;
+}
+
+message SendEmailResponse {
+  string email_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  string sent_at = 4;
+}
+
+message SendBulkEmailsRequest {
+  repeated SendEmailRequest emails = 1;
+}
+
+message SendBulkEmailsResponse {
+  repeated SendEmailResponse results = 1;
+  int32 total_sent = 2;
+  int32 total_failed = 3;
+}
+
+message GetEmailRequest {
+  string email_id = 1;
+}
+
+message EmailResponse {
+  string id = 1;
+  string tenant_id = 2;
+  string from = 3;
+  string to = 4;
+  string subject = 5;
+  string status = 6;
+  string tracking_id = 7;
+  bool open_tracked = 8;
+  string opened_at = 9;
+  int32 open_count = 10;
+  bool click_tracked = 11;
+  string first_clicked_at = 12;
+  int32 click_count = 13;
+  string scheduled_at = 14;
+  string sent_at = 15;
+  string delivered_at = 16;
+  string bounced_at = 17;
+  string bounce_type = 18;
+  string bounce_reason = 19;
+  string error_message = 20;
+  string provider_used = 21;
+  string created_at = 22;
+}
+
+message GetEmailStatusRequest {
+  string email_id = 1;
+}
+
+message EmailStatusResponse {
+  string email_id = 1;
+  string status = 2;
+  bool delivered = 3;
+  bool opened = 4;
+  bool clicked = 5;
+  bool bounced = 6;
+  string error_message = 7;
+}
+
+message TrackOpenRequest {
+  string tracking_id = 1;
+  string ip_address = 2;
+  string user_agent = 3;
+}
+
+message TrackOpenResponse {
+  bool success = 1;
+}
+
+message TrackClickRequest {
+  string email_id = 1;
+  string tracked_url = 2;
+  string ip_address = 3;
+  string user_agent = 4;
+}
+
+message TrackClickResponse {
+  string original_url = 1;
+  bool success = 2;
+}
+
+message HandleBounceRequest {
+  string recipient_email = 1;
+  string bounce_type = 2;
+  string reason = 3;
+  string provider_message_id = 4;
+}
+
+message HandleBounceResponse {
+  bool success = 1;
+}
+
+message HandleSpamComplaintRequest {
+  string recipient_email = 1;
+  string provider_message_id = 2;
+}
+
+message HandleSpamComplaintResponse {
+  bool success = 1;
+}
+
+message UnsubscribeRequest {
+  string email_address = 1;
+  string tenant_id = 2;
+  string campaign_id = 3;
+  string email_id = 4;
+  string reason = 5;
+  bool global_unsubscribe = 6;
+}
+
+message UnsubscribeResponse {
+  bool success = 1;
+  string message = 2;
+}

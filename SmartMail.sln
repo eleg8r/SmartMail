@@ -1,0 +1,88 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8B5A8F0C-1D2E-4F3E-9A5B-1C2D3E4F5A6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{2B3C4D5E-6F7A-8B9C-0D1E-2F3A4B5C6D7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4D5E6F7A-8B9C-0D1E-2F3A-4B5C6D7E8F9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Domain", "src\Core\SmartMail.Domain\SmartMail.Domain.csproj", "{5E6F7A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Application", "src\Core\SmartMail.Application\SmartMail.Application.csproj", "{6F7A8B9C-0D1E-2F3A-4B5C-6D7E8F9A0B1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Infrastructure", "src\Infrastructure\SmartMail.Infrastructure\SmartMail.Infrastructure.csproj", "{7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Persistence", "src\Infrastructure\SmartMail.Persistence\SmartMail.Persistence.csproj", "{8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.API", "src\Presentation\SmartMail.API\SmartMail.API.csproj", "{9C0D1E2F-3A4B-5C6D-7E8F-9A0B1C2D3E4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Analytics.Web", "src\Presentation\SmartMail.Analytics.Web\SmartMail.Analytics.Web.csproj", "{0D1E2F3A-4B5C-6D7E-8F9A-0B1C2D3E4F5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Domain.Tests", "tests\SmartMail.Domain.Tests\SmartMail.Domain.Tests.csproj", "{1E2F3A4B-5C6D-7E8F-9A0B-1C2D3E4F5A6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Application.Tests", "tests\SmartMail.Application.Tests\SmartMail.Application.Tests.csproj", "{2F3A4B5C-6D7E-8F9A-0B1C-2D3E4F5A6B7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMail.Infrastructure.Tests", "tests\SmartMail.Infrastructure.Tests\SmartMail.Infrastructure.Tests.csproj", "{3A4B5C6D-7E8F-9A0B-1C2D-3E4F5A6B7C8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E6F7A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6F7A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6F7A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6F7A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F7A8B9C-0D1E-2F3A-4B5C-6D7E8F9A0B1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F7A8B9C-0D1E-2F3A-4B5C-6D7E8F9A0B1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F7A8B9C-0D1E-2F3A-4B5C-6D7E8F9A0B1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F7A8B9C-0D1E-2F3A-4B5C-6D7E8F9A0B1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C0D1E2F-3A4B-5C6D-7E8F-9A0B1C2D3E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C0D1E2F-3A4B-5C6D-7E8F-9A0B1C2D3E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C0D1E2F-3A4B-5C6D-7E8F-9A0B1C2D3E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C0D1E2F-3A4B-5C6D-7E8F-9A0B1C2D3E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D1E2F3A-4B5C-6D7E-8F9A-0B1C2D3E4F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D1E2F3A-4B5C-6D7E-8F9A-0B1C2D3E4F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D1E2F3A-4B5C-6D7E-8F9A-0B1C2D3E4F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D1E2F3A-4B5C-6D7E-8F9A-0B1C2D3E4F5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E2F3A4B-5C6D-7E8F-9A0B-1C2D3E4F5A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E2F3A4B-5C6D-7E8F-9A0B-1C2D3E4F5A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E2F3A4B-5C6D-7E8F-9A0B-1C2D3E4F5A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E2F3A4B-5C6D-7E8F-9A0B-1C2D3E4F5A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F3A4B5C-6D7E-8F9A-0B1C-2D3E4F5A6B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F3A4B5C-6D7E-8F9A-0B1C-2D3E4F5A6B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F3A4B5C-6D7E-8F9A-0B1C-2D3E4F5A6B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F3A4B5C-6D7E-8F9A-0B1C-2D3E4F5A6B7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A4B5C6D-7E8F-9A0B-1C2D-3E4F5A6B7C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A4B5C6D-7E8F-9A0B-1C2D-3E4F5A6B7C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A4B5C6D-7E8F-9A0B-1C2D-3E4F5A6B7C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4B5C6D-7E8F-9A0B-1C2D-3E4F5A6B7C8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D} = {8B5A8F0C-1D2E-4F3E-9A5B-1C2D3E4F5A6B}
+		{2B3C4D5E-6F7A-8B9C-0D1E-2F3A4B5C6D7E} = {8B5A8F0C-1D2E-4F3E-9A5B-1C2D3E4F5A6B}
+		{3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F} = {8B5A8F0C-1D2E-4F3E-9A5B-1C2D3E4F5A6B}
+		{5E6F7A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B} = {1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D}
+		{6F7A8B9C-0D1E-2F3A-4B5C-6D7E8F9A0B1C} = {1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D}
+		{7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D} = {2B3C4D5E-6F7A-8B9C-0D1E-2F3A4B5C6D7E}
+		{8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E} = {2B3C4D5E-6F7A-8B9C-0D1E-2F3A4B5C6D7E}
+		{9C0D1E2F-3A4B-5C6D-7E8F-9A0B1C2D3E4F} = {3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F}
+		{0D1E2F3A-4B5C-6D7E-8F9A-0B1C2D3E4F5A} = {3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F}
+	EndGlobalSection
+EndGlobal

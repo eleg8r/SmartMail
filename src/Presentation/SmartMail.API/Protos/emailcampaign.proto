@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+option csharp_namespace = "SmartMail.API.Protos";
+
+package emailcampaign;
+
+// Email Campaign Service
+service EmailCampaignService {
+  rpc CreateCampaign (CreateCampaignRequest) returns (CampaignResponse);
+  rpc GetCampaign (GetCampaignRequest) returns (CampaignResponse);
+  rpc GetCampaigns (GetCampaignsRequest) returns (GetCampaignsResponse);
+  rpc ScheduleCampaign (ScheduleCampaignRequest) returns (ScheduleCampaignResponse);
+  rpc StartCampaign (StartCampaignRequest) returns (CampaignActionResponse);
+  rpc PauseCampaign (PauseCampaignRequest) returns (CampaignActionResponse);
+  rpc ResumeCampaign (ResumeCampaignRequest) returns (CampaignActionResponse);
+  rpc CancelCampaign (CancelCampaignRequest) returns (CampaignActionResponse);
+  rpc GetCampaignStatistics (GetCampaignStatisticsRequest) returns (CampaignStatisticsResponse);
+  rpc SelectAbTestWinner (SelectAbTestWinnerRequest) returns (CampaignActionResponse);
+}
+
+message CreateCampaignRequest {
+  string tenant_id = 1;
+  string name = 2;
+  string description = 3;
+  string campaign_type = 4; // OneTime, Scheduled, Drip, ABTest
+  string from = 5;
+  string from_display_name = 6;
+  string subject = 7;
+  string html_template = 8;
+  string text_template = 9;
+  repeated string recipients = 10;
+  repeated string recipient_list_ids = 11;
+  map<string, PersonalizationData> recipient_personalization = 12;
+  string scheduled_start_date = 13;
+  string scheduled_end_date = 14;
+  string time_zone = 15;
+  int32 batch_size = 16;
+  repeated BatchSchedule batch_schedules = 17;
+  int32 max_emails_per_hour = 18;
+  int32 max_emails_per_day = 19;
+  bool enable_open_tracking = 20;
+  bool enable_click_tracking = 21;
+  string unsubscribe_url = 22;
+  repeated CampaignVariant variants = 23;
+  int32 ab_test_sample_size = 24;
+  string ab_test_end_date = 25;
+  repeated DripStep drip_steps = 26;
+}
+
+message PersonalizationData {
+  map<string, string> data = 1;
+}
+
+message BatchSchedule {
+  int32 batch_number = 1;
+  string scheduled_time = 2;
+  int32 max_recipients = 3;
+}
+
+message CampaignVariant {
+  string name = 1;
+  string subject = 2;
+  string html_content = 3;
+  string text_content = 4;
+  int32 weight = 5;
+}
+
+message DripStep {
+  int32 step_number = 1;
+  string name = 2;
+  string subject = 3;
+  string html_content = 4;
+  string text_content = 5;
+  int32 delay_in_days = 6;
+  int32 delay_in_hours = 7;
+  int32 delay_in_minutes = 8;
+  string trigger_condition = 9;
+}
+
+message CampaignResponse {
+  string id = 1;
+  string tenant_id = 2;
+  string name = 3;
+  string description = 4;
+  string campaign_type = 5;
+  string status = 6;
+  string from = 7;
+  string subject = 8;
+  int32 total_recipients = 9;
+  int32 emails_sent = 10;
+  int32 emails_delivered = 11;
+  int32 emails_opened = 12;
+  int32 emails_clicked = 13;
+  int32 emails_bounced = 14;
+  int32 emails_failed = 15;
+  int32 unsubscribes = 16;
+  int32 spam_complaints = 17;
+  string scheduled_start_date = 18;
+  string scheduled_end_date = 19;
+  string time_zone = 20;
+  int32 batch_size = 21;
+  bool is_ab_test = 22;
+  bool is_drip_campaign = 23;
+  string created_at = 24;
+  string started_at = 25;
+  string completed_at = 26;
+  double open_rate = 27;
+  double click_rate = 28;
+  double bounce_rate = 29;
+}
+
+message GetCampaignRequest {
+  string campaign_id = 1;
+}
+
+message GetCampaignsRequest {
+  string tenant_id = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+}
+
+message GetCampaignsResponse {
+  repeated CampaignResponse campaigns = 1;
+  int32 total_count = 2;
+}
+
+message ScheduleCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ScheduleCampaignResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message StartCampaignRequest {
+  string campaign_id = 1;
+}
+
+message PauseCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ResumeCampaignRequest {
+  string campaign_id = 1;
+}
+
+message CancelCampaignRequest {
+  string campaign_id = 1;
+}
+
+message CampaignActionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetCampaignStatisticsRequest {
+  string campaign_id = 1;
+}
+
+message CampaignStatisticsResponse {
+  string campaign_id = 1;
+  string campaign_name = 2;
+  int32 total_recipients = 3;
+  int32 emails_sent = 4;
+  int32 emails_delivered = 5;
+  int32 emails_opened = 6;
+  int32 emails_clicked = 7;
+  int32 emails_bounced = 8;
+  int32 emails_failed = 9;
+  int32 unsubscribes = 10;
+  int32 spam_complaints = 11;
+  double open_rate = 12;
+  double click_rate = 13;
+  double bounce_rate = 14;
+  double unsubscribe_rate = 15;
+  repeated VariantStatistics variant_statistics = 16;
+}
+
+message VariantStatistics {
+  string variant_id = 1;
+  string name = 2;
+  int32 sent_count = 3;
+  int32 opened_count = 4;
+  int32 clicked_count = 5;
+  double open_rate = 6;
+  double click_rate = 7;
+}
+
+message SelectAbTestWinnerRequest {
+  string campaign_id = 1;
+  string winning_variant_id = 2;
+}

@@ -1,24 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.3.0" />
+    <PackageReference Include="MailKit" Version="3.6.0" />
     <PackageReference Include="SendGrid" Version="9.28.1" />
     <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300" />
     <PackageReference Include="Mailgun.Api" Version="1.0.2" />
-    <PackageReference Include="Hangfire.Core" Version="1.8.9" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.8.9" />
-    <PackageReference Include="Quartz" Version="3.8.0" />
-    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.8.0" />
-    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.0" />
-    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.36" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.36" />
+    <PackageReference Include="Quartz" Version="3.6.2" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.6.2" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.6.2" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

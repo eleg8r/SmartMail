@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SmartMail.Application.Common.Interfaces;
 
@@ -12,30 +11,29 @@ public record ScheduleCampaignCommand : IRequest<bool>
 
 public class ScheduleCampaignCommandHandler : IRequestHandler<ScheduleCampaignCommand, bool>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
     private readonly ISchedulerService _schedulerService;
     private readonly ILogger<ScheduleCampaignCommandHandler> _logger;
 
     public ScheduleCampaignCommandHandler(
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         ISchedulerService schedulerService,
         ILogger<ScheduleCampaignCommandHandler> logger)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
         _schedulerService = schedulerService;
         _logger = logger;
     }
 
     public async Task<bool> Handle(ScheduleCampaignCommand request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             throw new Exception($"Campaign {request.CampaignId} not found");
 
         campaign.Schedule();
-        await _context.SaveChangesAsync(cancellationToken);
+        await _campaignRepository.UpdateAsync(campaign, cancellationToken);
 
         // Schedule the campaign with the scheduler
         if (campaign.ScheduledStartDate.HasValue)
@@ -59,27 +57,26 @@ public record StartCampaignCommand : IRequest<bool>
 
 public class StartCampaignCommandHandler : IRequestHandler<StartCampaignCommand, bool>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
     private readonly ILogger<StartCampaignCommandHandler> _logger;
 
     public StartCampaignCommandHandler(
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         ILogger<StartCampaignCommandHandler> logger)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
         _logger = logger;
     }
 
     public async Task<bool> Handle(StartCampaignCommand request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             throw new Exception($"Campaign {request.CampaignId} not found");
 
         campaign.Start();
-        await _context.SaveChangesAsync(cancellationToken);
+        await _campaignRepository.UpdateAsync(campaign, cancellationToken);
 
         _logger.LogInformation("Started campaign {CampaignId}", request.CampaignId);
 
@@ -94,27 +91,26 @@ public record PauseCampaignCommand : IRequest<bool>
 
 public class PauseCampaignCommandHandler : IRequestHandler<PauseCampaignCommand, bool>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
     private readonly ILogger<PauseCampaignCommandHandler> _logger;
 
     public PauseCampaignCommandHandler(
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         ILogger<PauseCampaignCommandHandler> logger)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
         _logger = logger;
     }
 
     public async Task<bool> Handle(PauseCampaignCommand request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             throw new Exception($"Campaign {request.CampaignId} not found");
 
         campaign.Pause();
-        await _context.SaveChangesAsync(cancellationToken);
+        await _campaignRepository.UpdateAsync(campaign, cancellationToken);
 
         _logger.LogInformation("Paused campaign {CampaignId}", request.CampaignId);
 
@@ -129,27 +125,26 @@ public record ResumeCampaignCommand : IRequest<bool>
 
 public class ResumeCampaignCommandHandler : IRequestHandler<ResumeCampaignCommand, bool>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
     private readonly ILogger<ResumeCampaignCommandHandler> _logger;
 
     public ResumeCampaignCommandHandler(
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         ILogger<ResumeCampaignCommandHandler> logger)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
         _logger = logger;
     }
 
     public async Task<bool> Handle(ResumeCampaignCommand request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             throw new Exception($"Campaign {request.CampaignId} not found");
 
         campaign.Resume();
-        await _context.SaveChangesAsync(cancellationToken);
+        await _campaignRepository.UpdateAsync(campaign, cancellationToken);
 
         _logger.LogInformation("Resumed campaign {CampaignId}", request.CampaignId);
 
@@ -164,27 +159,26 @@ public record CancelCampaignCommand : IRequest<bool>
 
 public class CancelCampaignCommandHandler : IRequestHandler<CancelCampaignCommand, bool>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
     private readonly ILogger<CancelCampaignCommandHandler> _logger;
 
     public CancelCampaignCommandHandler(
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         ILogger<CancelCampaignCommandHandler> logger)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
         _logger = logger;
     }
 
     public async Task<bool> Handle(CancelCampaignCommand request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             throw new Exception($"Campaign {request.CampaignId} not found");
 
         campaign.Cancel();
-        await _context.SaveChangesAsync(cancellationToken);
+        await _campaignRepository.UpdateAsync(campaign, cancellationToken);
 
         _logger.LogInformation("Cancelled campaign {CampaignId}", request.CampaignId);
 

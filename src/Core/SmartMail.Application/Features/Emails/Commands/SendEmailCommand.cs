@@ -17,7 +17,8 @@ public record SendEmailCommand : IRequest<SendEmailResultDto>
 
 public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, SendEmailResultDto>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailRepository _emailRepository;
+    private readonly ITenantRepository _tenantRepository;
     private readonly IEmailService _emailService;
     private readonly ISchedulerService _schedulerService;
     private readonly ITrackingService _trackingService;
@@ -25,14 +26,16 @@ public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, SendEma
     private readonly ILogger<SendEmailCommandHandler> _logger;
 
     public SendEmailCommandHandler(
-        IApplicationDbContext context,
+        IEmailRepository emailRepository,
+        ITenantRepository tenantRepository,
         IEmailService emailService,
         ISchedulerService schedulerService,
         ITrackingService trackingService,
         ITemplateEngine templateEngine,
         ILogger<SendEmailCommandHandler> logger)
     {
-        _context = context;
+        _emailRepository = emailRepository;
+        _tenantRepository = tenantRepository;
         _emailService = emailService;
         _schedulerService = schedulerService;
         _trackingService = trackingService;
@@ -72,8 +75,7 @@ public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, SendEma
             }
 
             // Get tenant to retrieve max attachment size
-            var tenant = await _context.Tenants
-                .FindAsync(new object[] { dto.TenantId }, cancellationToken);
+            var tenant = await _tenantRepository.GetByIdAsync(dto.TenantId, cancellationToken);
 
             if (tenant == null)
                 throw new Exception($"Tenant {dto.TenantId} not found");
@@ -100,8 +102,7 @@ public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, SendEma
             }
 
             // Save to database
-            _context.Emails.Add(email);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _emailRepository.AddAsync(email, cancellationToken);
 
             // Send immediately or schedule
             if (request.SendImmediately && !dto.ScheduledAt.HasValue)

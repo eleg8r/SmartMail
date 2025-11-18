@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using SmartMail.Application.Common.Interfaces;
 using SmartMail.Application.DTOs;
 
@@ -12,17 +11,16 @@ public record GetCampaignQuery : IRequest<CampaignDto?>
 
 public class GetCampaignQueryHandler : IRequestHandler<GetCampaignQuery, CampaignDto?>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
 
-    public GetCampaignQueryHandler(IApplicationDbContext context)
+    public GetCampaignQueryHandler(IEmailCampaignRepository campaignRepository)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
     }
 
     public async Task<CampaignDto?> Handle(GetCampaignQuery request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             return null;
@@ -75,21 +73,21 @@ public record GetCampaignsQuery : IRequest<List<CampaignDto>>
 
 public class GetCampaignsQueryHandler : IRequestHandler<GetCampaignsQuery, List<CampaignDto>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
 
-    public GetCampaignsQueryHandler(IApplicationDbContext context)
+    public GetCampaignsQueryHandler(IEmailCampaignRepository campaignRepository)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
     }
 
     public async Task<List<CampaignDto>> Handle(GetCampaignsQuery request, CancellationToken cancellationToken)
     {
-        var campaigns = await _context.EmailCampaigns
-            .Where(c => c.TenantId.Value == request.TenantId)
-            .OrderByDescending(c => c.CreatedAt)
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+        var skip = (request.PageNumber - 1) * request.PageSize;
+        var campaigns = await _campaignRepository.GetByTenantIdAsync(
+            request.TenantId,
+            skip,
+            request.PageSize,
+            cancellationToken);
 
         return campaigns.Select(campaign => new CampaignDto
         {
@@ -137,18 +135,16 @@ public record GetCampaignStatisticsQuery : IRequest<CampaignStatisticsDto>
 
 public class GetCampaignStatisticsQueryHandler : IRequestHandler<GetCampaignStatisticsQuery, CampaignStatisticsDto>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
 
-    public GetCampaignStatisticsQueryHandler(IApplicationDbContext context)
+    public GetCampaignStatisticsQueryHandler(IEmailCampaignRepository campaignRepository)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
     }
 
     public async Task<CampaignStatisticsDto> Handle(GetCampaignStatisticsQuery request, CancellationToken cancellationToken)
     {
-        var campaign = await _context.EmailCampaigns
-            .Include(c => c.Variants)
-            .FirstOrDefaultAsync(c => c.Id == request.CampaignId, cancellationToken);
+        var campaign = await _campaignRepository.GetByIdAsync(request.CampaignId, cancellationToken);
 
         if (campaign == null)
             throw new Exception($"Campaign {request.CampaignId} not found");

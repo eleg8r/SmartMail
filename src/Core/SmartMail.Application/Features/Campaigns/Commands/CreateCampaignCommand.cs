@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SmartMail.Application.Common.Interfaces;
 using SmartMail.Application.DTOs;
@@ -16,16 +15,16 @@ public record CreateCampaignCommand : IRequest<CampaignDto>
 
 public class CreateCampaignCommandHandler : IRequestHandler<CreateCampaignCommand, CampaignDto>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IEmailCampaignRepository _campaignRepository;
     private readonly ITemplateEngine _templateEngine;
     private readonly ILogger<CreateCampaignCommandHandler> _logger;
 
     public CreateCampaignCommandHandler(
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         ITemplateEngine templateEngine,
         ILogger<CreateCampaignCommandHandler> logger)
     {
-        _context = context;
+        _campaignRepository = campaignRepository;
         _templateEngine = templateEngine;
         _logger = logger;
     }
@@ -137,8 +136,7 @@ public class CreateCampaignCommandHandler : IRequestHandler<CreateCampaignComman
         }
 
         // Save to database
-        _context.EmailCampaigns.Add(campaign);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _campaignRepository.AddAsync(campaign, cancellationToken);
 
         _logger.LogInformation("Created campaign {CampaignId} - {CampaignName}", campaign.Id, campaign.Name);
 

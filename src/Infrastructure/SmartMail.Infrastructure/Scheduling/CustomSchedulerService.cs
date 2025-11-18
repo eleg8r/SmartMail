@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -137,19 +136,21 @@ public class CustomSchedulerService : BackgroundService, ISchedulerService
                 job.Status = "Executing";
 
                 using var scope = _serviceProvider.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+                var emailRepository = scope.ServiceProvider.GetRequiredService<IEmailRepository>();
+                var campaignRepository = scope.ServiceProvider.GetRequiredService<IEmailCampaignRepository>();
+                var batchRepository = scope.ServiceProvider.GetRequiredService<IBatchScheduleRepository>();
                 var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
                 switch (job.JobType)
                 {
                     case "Email":
-                        await ExecuteEmailJob(job.EntityId, context, emailService, cancellationToken);
+                        await ExecuteEmailJob(job.EntityId, emailRepository, emailService, cancellationToken);
                         break;
                     case "Campaign":
-                        await ExecuteCampaignJob(job.EntityId, context, emailService, cancellationToken);
+                        await ExecuteCampaignJob(job.EntityId, campaignRepository, emailService, cancellationToken);
                         break;
                     case "Batch":
-                        await ExecuteBatchJob(job.EntityId, context, emailService, cancellationToken);
+                        await ExecuteBatchJob(job.EntityId, batchRepository, emailService, cancellationToken);
                         break;
                 }
 
@@ -180,11 +181,11 @@ public class CustomSchedulerService : BackgroundService, ISchedulerService
 
     private async Task ExecuteEmailJob(
         Guid emailId,
-        IApplicationDbContext context,
+        IEmailRepository emailRepository,
         IEmailService emailService,
         CancellationToken cancellationToken)
     {
-        var email = await context.Emails.FindAsync(new object[] { emailId }, cancellationToken);
+        var email = await emailRepository.GetByIdAsync(emailId, cancellationToken);
 
         if (email == null)
         {
@@ -193,18 +194,16 @@ public class CustomSchedulerService : BackgroundService, ISchedulerService
         }
 
         await emailService.SendEmailAsync(email, null, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await emailRepository.UpdateAsync(email, cancellationToken);
     }
 
     private async Task ExecuteCampaignJob(
         Guid campaignId,
-        IApplicationDbContext context,
+        IEmailCampaignRepository campaignRepository,
         IEmailService emailService,
         CancellationToken cancellationToken)
     {
-        var campaign = await context.EmailCampaigns
-            .Include(c => c.Recipients)
-            .FirstOrDefaultAsync(c => c.Id == campaignId, cancellationToken);
+        var campaign = await campaignRepository.GetByIdAsync(campaignId, cancellationToken);
 
         if (campaign == null)
         {
@@ -227,17 +226,16 @@ public class CustomSchedulerService : BackgroundService, ISchedulerService
             // This would involve template processing, personalization, etc.
         }
 
-        await context.SaveChangesAsync(cancellationToken);
+        await campaignRepository.UpdateAsync(campaign, cancellationToken);
     }
 
     private async Task ExecuteBatchJob(
         Guid batchId,
-        IApplicationDbContext context,
+        IBatchScheduleRepository batchRepository,
         IEmailService emailService,
         CancellationToken cancellationToken)
     {
-        var batch = await context.BatchSchedules
-            .FirstOrDefaultAsync(b => b.Id == batchId, cancellationToken);
+        var batch = await batchRepository.GetByIdAsync(batchId, cancellationToken);
 
         if (batch == null)
         {
@@ -249,6 +247,6 @@ public class CustomSchedulerService : BackgroundService, ISchedulerService
         // Similar to campaign processing but for a specific batch
 
         batch.MarkAsCompleted();
-        await context.SaveChangesAsync(cancellationToken);
+        await batchRepository.UpdateAsync(batch, cancellationToken);
     }
 }

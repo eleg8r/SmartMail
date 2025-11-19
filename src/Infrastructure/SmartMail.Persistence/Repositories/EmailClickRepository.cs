@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using SmartMail.Application.Common.Interfaces;
 using SmartMail.Domain.Entities;
+using SmartMail.Domain.ValueObjects;
 
 namespace SmartMail.Persistence.Repositories;
 
@@ -22,11 +23,17 @@ public class EmailClickRepository : IEmailClickRepository
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", emailClick.Id, DbType.Guid, ParameterDirection.InputOutput);
+        parameters.Add("@TenantId", emailClick.TenantId.Value);
         parameters.Add("@EmailId", emailClick.EmailId);
         parameters.Add("@CampaignId", emailClick.CampaignId);
+        parameters.Add("@RecipientEmail", emailClick.RecipientEmail.Address);
         parameters.Add("@OriginalUrl", emailClick.OriginalUrl);
+        parameters.Add("@TrackedUrl", emailClick.TrackedUrl);
         parameters.Add("@IpAddress", emailClick.IpAddress);
         parameters.Add("@UserAgent", emailClick.UserAgent);
+        parameters.Add("@Country", emailClick.Country);
+        parameters.Add("@City", emailClick.City);
+        parameters.Add("@Device", emailClick.Device);
 
         await connection.ExecuteAsync(
             "sp_EmailClick_Add",
@@ -60,10 +67,16 @@ public class EmailClickRepository : IEmailClickRepository
 
     private EmailClick MapToEmailClick(dynamic data)
     {
+        var tenantId = TenantId.Create((Guid)data.TenantId);
+        var recipientEmail = EmailAddress.Create((string)data.RecipientEmail);
+
         var click = EmailClick.Create(
+            tenantId,
             (Guid)data.EmailId,
             (Guid?)data.CampaignId,
+            recipientEmail,
             (string)data.OriginalUrl,
+            (string)data.TrackedUrl,
             (string?)data.IpAddress,
             (string?)data.UserAgent);
 
@@ -73,6 +86,17 @@ public class EmailClickRepository : IEmailClickRepository
 
         var clickedAtProperty = typeof(EmailClick).GetProperty("ClickedAt");
         clickedAtProperty?.SetValue(click, (DateTime)data.ClickedAt);
+
+        // Set optional geolocation and device info if available
+        if (data.Country != null && data.City != null)
+        {
+            click.SetGeolocation((string)data.Country, (string)data.City);
+        }
+
+        if (data.Device != null)
+        {
+            click.SetDevice((string)data.Device);
+        }
 
         return click;
     }

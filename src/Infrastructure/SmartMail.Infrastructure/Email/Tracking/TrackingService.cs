@@ -153,9 +153,12 @@ public class TrackingService : ITrackingService
 
             // Create EmailClick entity for detailed tracking
             var emailClick = EmailClick.Create(
+                email.TenantId,
                 emailId,
                 email.CampaignId,
+                email.To,
                 originalUrl,
+                trackedUrl,
                 ipAddress,
                 userAgent);
 

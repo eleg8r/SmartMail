@@ -1,4 +1,5 @@
 using System.Data;
+using System.Text.Json;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
@@ -33,12 +34,19 @@ public class CampaignRecipientRepository : ICampaignRecipientRepository
     {
         using var connection = new SqlConnection(_connectionString);
 
+        // Serialize PersonalizationData dictionary to JSON
+        string? personalizationDataJson = null;
+        if (recipient.PersonalizationData != null && recipient.PersonalizationData.Any())
+        {
+            personalizationDataJson = JsonSerializer.Serialize(recipient.PersonalizationData);
+        }
+
         var parameters = new DynamicParameters();
         parameters.Add("@Id", recipient.Id, DbType.Guid, ParameterDirection.InputOutput);
         parameters.Add("@CampaignId", recipient.CampaignId);
         parameters.Add("@EmailAddress", recipient.EmailAddress.Address);
         parameters.Add("@EmailDisplayName", recipient.EmailAddress.DisplayName);
-        parameters.Add("@PersonalizationData", recipient.PersonalizationDataJson);
+        parameters.Add("@PersonalizationData", personalizationDataJson);
 
         await connection.ExecuteAsync(
             "sp_CampaignRecipient_Add",
@@ -73,10 +81,25 @@ public class CampaignRecipientRepository : ICampaignRecipientRepository
             (string)data.EmailAddress,
             (string?)data.EmailDisplayName);
 
+        // Deserialize PersonalizationData from JSON
+        Dictionary<string, string>? personalizationData = null;
+        if (data.PersonalizationData != null && !string.IsNullOrWhiteSpace((string)data.PersonalizationData))
+        {
+            try
+            {
+                personalizationData = JsonSerializer.Deserialize<Dictionary<string, string>>((string)data.PersonalizationData);
+            }
+            catch
+            {
+                // If deserialization fails, use empty dictionary
+                personalizationData = new Dictionary<string, string>();
+            }
+        }
+
         var recipient = CampaignRecipient.Create(
             (Guid)data.CampaignId,
             emailAddress,
-            null); // PersonalizationData would need to be deserialized from JSON
+            personalizationData);
 
         // Set Id using reflection
         var idProperty = typeof(CampaignRecipient).BaseType?.GetProperty("Id");
